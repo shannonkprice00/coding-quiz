@@ -50,7 +50,7 @@ var questionSctn = document.querySelector("#question-sctn");
 // Other Variables Needed
 var timerCount = 0;
 var score = 0;
-var currentQuestion;
+var currentQuestion = 0;
 
 // Functions
 function renderQuestion() {
@@ -59,24 +59,46 @@ function renderQuestion() {
 
     var index = 0 
     var currentQuestion = questionsArr[index];
-
-    console.log(currentQuestion.question)  
-
     var questionEl = document.createElement("h2");
     var listEl = document.createElement("ol");
     var lineEl1 = document.createElement("li");
     var lineEl2 = document.createElement("li");
     var lineEl3 = document.createElement("li");
     var lineEl4 = document.createElement("li");
+    var nextBtn = document.createElement("button");
+   
+
     questionEl.textContent = currentQuestion.question;
-    liEl.textContent = currentQuestion.choices;
+    lineEl1.textContent = currentQuestion.choices[0];
+    lineEl2.textContent = currentQuestion.choices[1];
+    lineEl3.textContent = currentQuestion.choices[2];
+    lineEl4.textContent = currentQuestion.choices[3];
+    nextBtn.textContent = "Next Question";
+   
     
     questionSctn.appendChild(questionEl); 
     questionSctn.appendChild(listEl);
     listEl.appendChild(lineEl1);
+    listEl.appendChild(lineEl2);
+    listEl.appendChild(lineEl3);
+    listEl.appendChild(lineEl4);
+    questionSctn.appendChild(nextBtn);
 
-  
-}
+    function nextQuestion() {
+        for (var index = 0; index < questionsArr.length; index++) {
+            currentQuestion.question = questionsArr[index];   
+        };
+        for (var index = 0; index < questionsArr.length; index++) {
+            currentQuestion.choices = questionsArr[index];   
+        };
+    };
+    lineEl1.addEventListener("click", nextQuestion);
+    lineEl2.addEventListener("click", nextQuestion);
+    lineEl3.addEventListener("click", nextQuestion);
+    lineEl4.addEventListener("click", nextQuestion);
+    nextBtn.addEventListener("click", nextQuestion);
+};
+
 
 
 function startTimer() {
