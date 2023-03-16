@@ -50,15 +50,39 @@ var questionSctn = document.querySelector("#question-sctn");
 // Other Variables Needed
 var timerCount = 0;
 var score = 0;
-var currentQuestion = 0;
+var currentQuestionIndex = 0;
+var selectedAnswer = [];
 
 // Functions
-function renderQuestion() {
-    // hides html elements on initial page set up
-    initialPageDiv.style.display = "none";
+function nextQuestion() {
+// check answers here
+    // if(!selectedAnswer) {
+    //     alert("You must select an answer");
+    // }
 
-    var index = 0 
-    var currentQuestion = questionsArr[index];
+    // if(selectedAnswer === currentQuestion.answer) {
+    //     var hrEl = document.createElement("hr");
+    //     var correctEl = document.createElement("p");
+    //     correctEl.textContent = "Correct!"
+    //     questionSctn.appendChild(hrEl);
+    //     questionSctn.appendChild(correctEl);
+    //     score++;
+    // } else {
+    //     var hrEl = document.createElement("hr");
+    //     var incorrectEl = document.createElement("p");
+    //     incorrectEl.textContent = "Wrong!"
+    //     questionSctn.appendChild(hrEl);
+    //     questionSctn.appendChild(incorrectEl);
+    //     timerCount -5;
+    // }
+
+    questionSctn.innerHTML = "";
+    currentQuestionIndex++;
+    renderQuestion()
+};
+
+function renderQuestion() {
+    var currentQuestion = questionsArr[currentQuestionIndex];
     var questionEl = document.createElement("h2");
     var listEl = document.createElement("ol");
     var lineEl1 = document.createElement("li");
@@ -84,14 +108,6 @@ function renderQuestion() {
     listEl.appendChild(lineEl4);
     questionSctn.appendChild(nextBtn);
 
-    function nextQuestion() {
-        for (var index = 0; index < questionsArr.length; index++) {
-            currentQuestion.question = questionsArr[index];   
-        };
-        for (var index = 0; index < questionsArr.length; index++) {
-            currentQuestion.choices = questionsArr[index];   
-        };
-    };
     lineEl1.addEventListener("click", nextQuestion);
     lineEl2.addEventListener("click", nextQuestion);
     lineEl3.addEventListener("click", nextQuestion);
@@ -114,6 +130,7 @@ function startTimer() {
 function startQuiz() {
     timerCount = 50;
     startTimer();
+    initialPageDiv.style.display = "none";
     renderQuestion();
 }
 
