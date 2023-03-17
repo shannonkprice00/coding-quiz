@@ -46,39 +46,48 @@ var timerEl = document.querySelector("#timer");
 var scoreEl = document.querySelector("#high-scores");
 var startBtn = document.querySelector("#start-btn");
 var questionSctn = document.querySelector("#question-sctn");
+var endSection = document.querySelector("#end");
+var highScores = document.querySelector("#view-high-scores");
 
 // Other Variables Needed
 var timerCount = 0;
 var score = 0;
 var currentQuestionIndex = 0;
-var selectedAnswer = [];
+var scoresArr = [];
+
+
 
 // Functions
-function nextQuestion() {
+function nextQuestion(event) {
 // check answers here
-    // if(!selectedAnswer) {
-    //     alert("You must select an answer");
-    // }
-
-    // if(selectedAnswer === currentQuestion.answer) {
-    //     var hrEl = document.createElement("hr");
-    //     var correctEl = document.createElement("p");
-    //     correctEl.textContent = "Correct!"
-    //     questionSctn.appendChild(hrEl);
-    //     questionSctn.appendChild(correctEl);
-    //     score++;
-    // } else {
-    //     var hrEl = document.createElement("hr");
-    //     var incorrectEl = document.createElement("p");
-    //     incorrectEl.textContent = "Wrong!"
-    //     questionSctn.appendChild(hrEl);
-    //     questionSctn.appendChild(incorrectEl);
-    //     timerCount -5;
-    // }
-
-    questionSctn.innerHTML = "";
-    currentQuestionIndex++;
-    renderQuestion()
+var selectedAnswer = event.target.innerHTML;
+console.log(selectedAnswer)
+    if(selectedAnswer === questionsArr[currentQuestionIndex].answer) {
+        var hrEl = document.createElement("hr");
+        var correctEl = document.createElement("p");
+        correctEl.textContent = "Correct!"
+        questionSctn.appendChild(hrEl);
+        questionSctn.appendChild(correctEl);
+        score = score + 10;
+    } else {
+        var hrEl = document.createElement("hr");
+        var incorrectEl = document.createElement("p");
+        incorrectEl.textContent = "Wrong!"
+        questionSctn.appendChild(hrEl);
+        questionSctn.appendChild(incorrectEl);
+        timerCount = timerCount -5;
+    }
+    setTimeout(function() {
+        currentQuestionIndex++;
+        questionSctn.innerHTML = "";
+        if(currentQuestionIndex >= questionsArr.length) {
+            currentQuestionIndex = 0
+            endQuiz()
+        } else {
+            renderQuestion();
+            renderScore();
+        }
+    }, 3000)
 };
 
 function renderQuestion() {
@@ -89,16 +98,12 @@ function renderQuestion() {
     var lineEl2 = document.createElement("li");
     var lineEl3 = document.createElement("li");
     var lineEl4 = document.createElement("li");
-    var nextBtn = document.createElement("button");
-   
 
     questionEl.textContent = currentQuestion.question;
     lineEl1.textContent = currentQuestion.choices[0];
     lineEl2.textContent = currentQuestion.choices[1];
     lineEl3.textContent = currentQuestion.choices[2];
     lineEl4.textContent = currentQuestion.choices[3];
-    nextBtn.textContent = "Next Question";
-   
     
     questionSctn.appendChild(questionEl); 
     questionSctn.appendChild(listEl);
@@ -106,23 +111,25 @@ function renderQuestion() {
     listEl.appendChild(lineEl2);
     listEl.appendChild(lineEl3);
     listEl.appendChild(lineEl4);
-    questionSctn.appendChild(nextBtn);
 
     lineEl1.addEventListener("click", nextQuestion);
     lineEl2.addEventListener("click", nextQuestion);
     lineEl3.addEventListener("click", nextQuestion);
     lineEl4.addEventListener("click", nextQuestion);
-    nextBtn.addEventListener("click", nextQuestion);
 };
 
-
+function renderScore() {
+    var currentScore = document.querySelector("#current-score");
+    currentScore.textContent = score.valueOf();
+}
 
 function startTimer() {
-    timer = setInterval(function() {
+   var timer = setInterval(function() {
         timerCount--;
         timerEl.textContent = timerCount;
-        if (timerCount === 0) {
+        if (timerCount <= 0) {
             clearInterval(timer);
+            endQuiz();
         }
     }, 1000);
 }
@@ -132,6 +139,45 @@ function startQuiz() {
     startTimer();
     initialPageDiv.style.display = "none";
     renderQuestion();
+    renderScore();
+}
+
+function viewHighScores() {
+    endSection.style.display = "none";
+    questionSctn.style.display = "none";
+    var scoreDisplay = JSON.parse(localStorage.getItem("userScore"));
+    for (var i = 0; i < scoreDisplay.length; i++) {
+        var scoreDisplayli = document.createElement("li");
+        scoreDisplayli.innerHTML = "Initials: " + scoreDisplay.initials[i] + "Score: " + scoreDisplay.score[i];
+        console.log(scoreDisplayli);
+        highScores.appendChild(scoreDisplayli);
+}
+}
+
+function endQuiz() {
+    questionSctn.style.display = "none"
+    var outcome = document.createElement("h1")
+    outcome.innerHTML = "You got a score of: " + score + "/10"
+    endSection.append(outcome)
+    var input = document.createElement("input")
+    input.setAttribute("placeholder", "Initials...")
+    endSection.append(input)
+    var submit = document.createElement("button")
+    submit.innerHTML = "Submit"
+    endSection.append(submit)
+    submit.addEventListener("click", function() {
+
+    var intials = input.value;
+    var values = {
+        intials: intials,
+        score: score
+    };
+    scoresArr.push(values);
+    localStorage.setItem("userScore", JSON.stringify(scoresArr));
+
+    viewHighScores();
+})
 }
 
 startBtn.addEventListener("click", startQuiz);
+scoreEl.addEventListener("click", viewHighScores);
