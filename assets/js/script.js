@@ -118,14 +118,27 @@ function renderQuestion() {
     listEl.appendChild(lineEl3);
     listEl.appendChild(lineEl4);
 
-    // lineEl1.addEventListener("click", function () {
-    //     // .disable = true
-    //     nextQuestion();
-    // });
-    lineEl1.addEventListener("click", nextQuestion);
-    lineEl2.addEventListener("click", nextQuestion);
-    lineEl3.addEventListener("click", nextQuestion);
-    lineEl4.addEventListener("click", nextQuestion);
+    lineEl1.addEventListener("click", function() {
+        lineEl1.disabled = "true";
+        nextQuestion();
+    });
+    lineEl2.addEventListener("click", function() {
+        lineEl2.disabled = "true";
+        nextQuestion();
+    });
+    lineEl3.addEventListener("click", function() {
+        lineEl3.disabled = "true";
+        nextQuestion();
+    });
+    lineEl4.addEventListener("click", function() {
+        lineEl4.disabled = "true";
+        nextQuestion();
+    });
+    
+    // lineEl1.addEventListener("click", nextQuestion);
+    // lineEl2.addEventListener("click", nextQuestion);
+    // lineEl3.addEventListener("click", nextQuestion);
+    // lineEl4.addEventListener("click", nextQuestion);
 };
 
 function renderScore() {
@@ -168,10 +181,22 @@ function viewHighScores() {
         scoreDisplayli.innerHTML = "Initials: " + scoreDisplay[i].initials + " Score: " + scoreDisplay[i].score + " %";
         highScores.appendChild(scoreDisplayli);
     }
+    scoreEl.removeEventListener("click", viewHighScores);
 }
 
+function renderBtns() {
+    var viewScoresBtn = document.createElement("button");
+    var playAgain = document.createElement("button");
+    viewScoresBtn.textContent = "View High Scores";
+    playAgain.textContent = "Play Again";
+    endSection.appendChild(viewScoresBtn);
+    endSection.appendChild(playAgain);
+    viewScoresBtn.addEventListener("click", viewHighScores);
+    playAgain.addEventListener("click", startQuiz);
+}
 function endQuiz() {
     questionSctn.style.display = "none";
+    scoreDiv.style.visibility = "visible";
     var outcome = document.createElement("h1");
     outcome.innerHTML = "You got a score of: " + (score / 10) + "/10";
     endSection.append(outcome);
@@ -190,9 +215,11 @@ function endQuiz() {
     };
     scoresArr.push(values);
     localStorage.setItem("userScore", JSON.stringify(scoresArr));
-    input.setAttribute("placeholder", " ");
+
+    renderBtns();
 })
     renderScore();
+   
 }
 init ();
 
@@ -203,5 +230,4 @@ scoreEl.addEventListener("click", viewHighScores);
 // TO DO: endQuiz functions once when timer hits 0 (or less due to time deduction penalties) AND when finished with last question...I need
 // to figure out how to make the score and initials input box only appear one time if the user gets through all the questions. 
 // TO DO: figure out how to get high scores to push arrays everytime function is called.
-// TO DO: add "play again" and "view high score" buttons to end page (after initials are submitted) 
 // TO DO: style project
