@@ -72,10 +72,17 @@ function init() {
     currentQuestionIndex = 0;
     score = 0;
     scoreEl.addEventListener("click", viewhighScoreSctn);
+    scoresArr = JSON.parse(localStorage.getItem("userScore"));
+
 }
 // calls next question and renders it to the page. Also checks target of the event against stored correct answer in object (in questionsArr).
 function nextQuestion(event) {
     // check answers here
+    var multipleChoices = document.querySelectorAll(".multiple-choice");
+    for (var index = 0; index < multipleChoices.length; index++) {
+        var element = multipleChoices[index];
+        element.style.pointerEvents = "none";
+    }
     var selectedAnswer = event.target.textContent;
     // if correct...
     if (selectedAnswer === questionsArr[currentQuestionIndex].answer) {
