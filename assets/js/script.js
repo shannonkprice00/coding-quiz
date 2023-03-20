@@ -57,8 +57,6 @@ var score = 0;
 var currentQuestionIndex = 0;
 var scoresArr = [];
 
-
-
 // Functions
 function init() {
     endSection.style.display = "none";
@@ -122,25 +120,21 @@ function renderQuestion() {
     var lineEl2 = document.createElement("li");
     var lineEl3 = document.createElement("li");
     var lineEl4 = document.createElement("li");
-
     lineEl1.className = "multiple-choice";
     lineEl2.className = "multiple-choice";
     lineEl3.className = "multiple-choice";
     lineEl4.className = "multiple-choice";
-
     questionEl.textContent = currentQuestion.question;
     lineEl1.textContent = currentQuestion.choices[0];
     lineEl2.textContent = currentQuestion.choices[1];
     lineEl3.textContent = currentQuestion.choices[2];
     lineEl4.textContent = currentQuestion.choices[3];
-    
     questionSctn.appendChild(questionEl); 
     questionEl.appendChild(listEl);
     questionEl.appendChild(lineEl1);
     questionEl.appendChild(lineEl2);
     questionEl.appendChild(lineEl3);
     questionEl.appendChild(lineEl4);
-
     lineEl1.addEventListener("click", nextQuestion);
     lineEl2.addEventListener("click", nextQuestion);
     lineEl3.addEventListener("click", nextQuestion);
@@ -180,7 +174,6 @@ function viewHighScores() {
     endSection.style.display = "none";
     initialPageDiv.style.display = "none";
     questionSctn.style.display = "none";
-
     // if (!"userScore") {
     //     var msg = document.createElement("p");
     //     msg.textContent = "No Scores Yet";
@@ -198,7 +191,6 @@ function viewHighScores() {
     startQuiz.textContent = "Start Quiz";
     startQuiz.className = "end-buttons";
     highScores.appendChild(startQuiz);
-
     startQuiz.addEventListener("click", function() {
         highScores.innerHTML = "";
         startQuiz.remove();
@@ -234,7 +226,6 @@ function endQuiz() {
     endSection.style.display = "block";
     scoreDiv.style.visibility = "visible";
     timeDiv.style.visibility = "hidden";
-
     var outcome = document.createElement("h1");
     outcome.innerHTML = "You got a score of: " + (score / 10) + "/10";
     endSection.append(outcome);
@@ -246,19 +237,23 @@ function endQuiz() {
     submit.className = "end-buttons";
     endSection.append(submit);
     submit.addEventListener("click", function() {
-
-    var initials = input.value;
-    var values = {
-        initials: initials,
-        score: score
-    };
+    if (input.value === "") {
+        alert("You must input initials!");
+        endSection.innerHTML = "";
+        endQuiz ();
+        return;
+    } else {
+        var initials = input.value;
+        var values = {
+            initials: initials,
+            score: score
+        };
+    }
     scoresArr.push(values);
     localStorage.setItem("userScore", JSON.stringify(scoresArr));
-
     outcome.style.display = "none";
     input.style.display = "none";
     submit.style.display = "none";
-
     renderBtns();
 })
     renderScore();
