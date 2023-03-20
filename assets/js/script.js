@@ -61,9 +61,18 @@ var scoresArr = [];
 
 // Functions
 function init() {
+    endSection.style.display = "none";
+    questionSctn.style.display = "none";
+    highScores.style.display = "none";
+    questionSctn.innerHTML = "";
+    endSection.innerHTML = "";
+    highScores.innerHTML = "";
+    initialPageDiv.style.display = "flex";
     scoreDiv.style.visibility = "hidden";
     timeDiv.style.visibility = "hidden";
-    console.log(questionsArr);
+    currentQuestionIndex = 0;
+    score = 0;
+    scoreEl.addEventListener("click", viewHighScores);
 }
 
 function nextQuestion(event) {
@@ -75,6 +84,8 @@ function nextQuestion(event) {
         correctEl.textContent = "Correct!"
         questionSctn.appendChild(hrEl);
         questionSctn.appendChild(correctEl);
+        hrEl.className = "feedback"
+        correctEl.className = "feedback"
         score = score + 10;
     } else {
         var hrEl = document.createElement("hr");
@@ -82,21 +93,28 @@ function nextQuestion(event) {
         incorrectEl.textContent = "Wrong!"
         questionSctn.appendChild(hrEl);
         questionSctn.appendChild(incorrectEl);
+        hrEl.className = "feedback"
+        incorrectEl.className = "feedback"
         timerCount = timerCount -5;
     }
     setTimeout(function() {
         currentQuestionIndex++;
         questionSctn.innerHTML = "";
+        questionSctn.innerHTML = "";
         if(currentQuestionIndex >= questionsArr.length) {
-            currentQuestionIndex = 0
-            endQuiz()
+            currentQuestionIndex = 0;
+            timerCount = 0;
         } else {
             renderQuestion();
         }
-    }, 2000)
+    }, 1000)
 };
 
 function renderQuestion() {
+    questionSctn.style.display = "block";
+    highScores.style.display = "none";
+    endSection.style.display = "none";
+    scoreDiv.style.visibility = "hidden";
     var currentQuestion = questionsArr[currentQuestionIndex];
     var questionEl = document.createElement("h2");
     var listEl = document.createElement("ol");
@@ -105,6 +123,11 @@ function renderQuestion() {
     var lineEl3 = document.createElement("li");
     var lineEl4 = document.createElement("li");
 
+    lineEl1.className = "multiple-choice";
+    lineEl2.className = "multiple-choice";
+    lineEl3.className = "multiple-choice";
+    lineEl4.className = "multiple-choice";
+
     questionEl.textContent = currentQuestion.question;
     lineEl1.textContent = currentQuestion.choices[0];
     lineEl2.textContent = currentQuestion.choices[1];
@@ -112,33 +135,16 @@ function renderQuestion() {
     lineEl4.textContent = currentQuestion.choices[3];
     
     questionSctn.appendChild(questionEl); 
-    questionSctn.appendChild(listEl);
-    listEl.appendChild(lineEl1);
-    listEl.appendChild(lineEl2);
-    listEl.appendChild(lineEl3);
-    listEl.appendChild(lineEl4);
+    questionEl.appendChild(listEl);
+    questionEl.appendChild(lineEl1);
+    questionEl.appendChild(lineEl2);
+    questionEl.appendChild(lineEl3);
+    questionEl.appendChild(lineEl4);
 
-    lineEl1.addEventListener("click", function() {
-        lineEl1.disabled = "true";
-        nextQuestion();
-    });
-    lineEl2.addEventListener("click", function() {
-        lineEl2.disabled = "true";
-        nextQuestion();
-    });
-    lineEl3.addEventListener("click", function() {
-        lineEl3.disabled = "true";
-        nextQuestion();
-    });
-    lineEl4.addEventListener("click", function() {
-        lineEl4.disabled = "true";
-        nextQuestion();
-    });
-    
-    // lineEl1.addEventListener("click", nextQuestion);
-    // lineEl2.addEventListener("click", nextQuestion);
-    // lineEl3.addEventListener("click", nextQuestion);
-    // lineEl4.addEventListener("click", nextQuestion);
+    lineEl1.addEventListener("click", nextQuestion);
+    lineEl2.addEventListener("click", nextQuestion);
+    lineEl3.addEventListener("click", nextQuestion);
+    lineEl4.addEventListener("click", nextQuestion);
 };
 
 function renderScore() {
@@ -155,6 +161,10 @@ function startTimer() {
             endQuiz();
         }
     }, 1000);
+    scoreEl.addEventListener("click", function () {
+        clearInterval(timer);
+        timeDiv.style.visibility = "hidden";
+    })
 }
 
 function startQuiz() {
@@ -166,22 +176,35 @@ function startQuiz() {
 }
 
 function viewHighScores() {
+    highScores.style.display = "block";
     endSection.style.display = "none";
-    questionSctn.style.display = "none";
     initialPageDiv.style.display = "none";
+    questionSctn.style.display = "none";
 
-    // if ("userScore" === '') {
+    // if (!"userScore") {
     //     var msg = document.createElement("p");
     //     msg.textContent = "No Scores Yet";
     //     endSection.appendChild(msg);
-    // }
-    var scoreDisplay = JSON.parse(localStorage.getItem("userScore"));
-    for (var i = 0; i < scoreDisplay.length; i++) {
-        var scoreDisplayli = document.createElement("li");
-        scoreDisplayli.innerHTML = "Initials: " + scoreDisplay[i].initials + " Score: " + scoreDisplay[i].score + " %";
-        highScores.appendChild(scoreDisplayli);
+    // } else {
+        var scoreDisplay = JSON.parse(localStorage.getItem("userScore"));
+        for (var i = 0; i < scoreDisplay.length; i++) {
+            var scoreDisplayli = document.createElement("li");
+            scoreDisplayli.className = "high-scores-list"
+            scoreDisplayli.innerHTML = "Initials: " + scoreDisplay[i].initials.toUpperCase() + " Score: " + scoreDisplay[i].score + " %";
+            highScores.appendChild(scoreDisplayli);
     }
     scoreEl.removeEventListener("click", viewHighScores);
+    var startQuiz = document.createElement("button");
+    startQuiz.textContent = "Start Quiz";
+    startQuiz.className = "end-buttons";
+    highScores.appendChild(startQuiz);
+
+    startQuiz.addEventListener("click", function() {
+        highScores.innerHTML = "";
+        startQuiz.remove();
+        init();
+    });
+
 }
 
 function renderBtns() {
@@ -189,14 +212,29 @@ function renderBtns() {
     var playAgain = document.createElement("button");
     viewScoresBtn.textContent = "View High Scores";
     playAgain.textContent = "Play Again";
+    viewScoresBtn.className = "end-buttons";
+    playAgain.className = "end-buttons";
     endSection.appendChild(viewScoresBtn);
     endSection.appendChild(playAgain);
-    viewScoresBtn.addEventListener("click", viewHighScores);
-    playAgain.addEventListener("click", startQuiz);
+    viewScoresBtn.addEventListener("click", function() {
+        score = 0;
+        viewScoresBtn.remove();
+        playAgain.remove();
+        viewHighScores();
+    });
+    playAgain.addEventListener("click", function() {
+        score = 0;
+        viewScoresBtn.remove();
+        playAgain.remove();
+        startQuiz();
+    });
 }
 function endQuiz() {
     questionSctn.style.display = "none";
+    endSection.style.display = "block";
     scoreDiv.style.visibility = "visible";
+    timeDiv.style.visibility = "hidden";
+
     var outcome = document.createElement("h1");
     outcome.innerHTML = "You got a score of: " + (score / 10) + "/10";
     endSection.append(outcome);
@@ -205,6 +243,7 @@ function endQuiz() {
     endSection.append(input);
     var submit = document.createElement("button");
     submit.innerHTML = "Submit";
+    submit.className = "end-buttons";
     endSection.append(submit);
     submit.addEventListener("click", function() {
 
@@ -216,18 +255,18 @@ function endQuiz() {
     scoresArr.push(values);
     localStorage.setItem("userScore", JSON.stringify(scoresArr));
 
+    outcome.style.display = "none";
+    input.style.display = "none";
+    submit.style.display = "none";
+
     renderBtns();
 })
     renderScore();
-   
 }
+
 init ();
 
 startBtn.addEventListener("click", startQuiz);
-scoreEl.addEventListener("click", viewHighScores);
 
-// TO DO: disable event listeners so items may only be clicked once (MC items, view high score element, and submit button on end page)
-// TO DO: endQuiz functions once when timer hits 0 (or less due to time deduction penalties) AND when finished with last question...I need
-// to figure out how to make the score and initials input box only appear one time if the user gets through all the questions. 
+// TO DO: disable event listeners so items may only be clicked once (MC items)
 // TO DO: figure out how to get high scores to push arrays everytime function is called.
-// TO DO: style project

@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="stylesheet" src="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/style.css"/>
     <title>JavaScript Quiz</title>
 </head>
 
 <body>
     <header>
         <h3 id="high-scores">View high scores</h3>
-        <div id="score-div">Score: <span id="current-score"></span></div>
-        <div id="time-div">Current Time: <span id="timer"></span></div>
+        <div id="score-div" class="align-right">Score: <span id="current-score"></span>
+            <div id="time-div">Current Time: <span id="timer"></span></div>
+        </div>
     </header>
     <main>
         <div id="initial-page">
@@ -22,9 +23,11 @@
             penalize your score by one point and time left by five seconds.</p>
         <button id="start-btn">Start</button>
         </div>
-        <section id="question-sctn"></section>
-        <section id="end"></section>
-        <section id="view-high-scores"></section>
+        <section id="question-sctn" class="main-display">
+            <div id="question-options"></div>
+        </section>
+        <section id="end" class="main-display"></section>
+        <section id="view-high-scores" class="main-display"></section>
     </main>
     <script src="./assets/js/script.js"></script>
 </body>
