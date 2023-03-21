@@ -279,7 +279,11 @@ function endQuiz() {
             };
         }
         // pushes the objects together in array and stores under "userScore" in local storage
-        scoresArr.push(values);
+        if (scoresArr) {
+            scoresArr.push(values);
+        } else {
+            scoresArr = [values];
+        }
         localStorage.setItem("userScore", JSON.stringify(scoresArr));
         // clears out existing button, input box and heading and renders view high score and start quiz buttons to page
         outcome.style.display = "none";
