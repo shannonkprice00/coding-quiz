@@ -72,17 +72,19 @@ function init() {
     currentQuestionIndex = 0;
     score = 0;
     scoreEl.addEventListener("click", viewhighScoreSctn);
+    // updates scoresArr to include previously stored information
     scoresArr = JSON.parse(localStorage.getItem("userScore"));
 
 }
 // calls next question and renders it to the page. Also checks target of the event against stored correct answer in object (in questionsArr).
 function nextQuestion(event) {
-    // check answers here
+    // loops through multiple choices and disables the click function to prevent clicking more than one answer per question
     var multipleChoices = document.querySelectorAll(".multiple-choice");
     for (var index = 0; index < multipleChoices.length; index++) {
         var element = multipleChoices[index];
         element.style.pointerEvents = "none";
     }
+    // check answers here
     var selectedAnswer = event.target.textContent;
     // if correct...
     if (selectedAnswer === questionsArr[currentQuestionIndex].answer) {
@@ -116,7 +118,7 @@ function nextQuestion(event) {
         } else {
             renderQuestion();
         }
-    }, 1000)
+    }, 2000)
 };
 // Dynamically creates question elements and appends them to the questionSctn variable
 function renderQuestion() {
@@ -292,6 +294,3 @@ function endQuiz() {
 init();
 // event listener to call startquiz function on click of start quiz button on initial page
 startBtn.addEventListener("click", startQuiz);
-
-// TO DO: disable event listeners so items may only be clicked once (MC items)
-// TO DO: figure out how to get high scores to push arrays everytime function is called.
