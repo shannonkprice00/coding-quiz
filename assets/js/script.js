@@ -63,6 +63,15 @@ function init() {
     endSctn.style.display = "none";
     questionSctn.style.display = "none";
     highScoreSctn.style.display = "none";
+    scoreDiv.style.visibility = "hidden";
+    timeDiv.style.visibility = "hidden";
+    scoreEl.addEventListener("click", viewhighScoreSctn);
+
+}
+function resetQuiz() {
+    endSctn.style.display = "none";
+    questionSctn.style.display = "none";
+    highScoreSctn.style.display = "none";
     questionSctn.innerHTML = "";
     endSctn.innerHTML = "";
     highScoreSctn.innerHTML = "";
@@ -74,7 +83,6 @@ function init() {
     scoreEl.addEventListener("click", viewhighScoreSctn);
     // updates scoresArr to include previously stored information
     scoresArr = JSON.parse(localStorage.getItem("userScore"));
-
 }
 // calls next question and renders it to the page. Also checks target of the event against stored correct answer in object (in questionsArr).
 function nextQuestion(event) {
@@ -206,7 +214,7 @@ function viewhighScoreSctn() {
         back.textContent = "Go Back"
         back.className = "end-buttons"
         highScoreSctn.appendChild(back);
-        back.addEventListener("click", init);
+        back.addEventListener("click", resetQuiz);
         return;
     }
     // event listener removed so user cannot continuously click and replicate the same score
@@ -220,7 +228,7 @@ function viewhighScoreSctn() {
     startQuiz.addEventListener("click", function () {
         highScoreSctn.innerHTML = "";
         startQuiz.remove();
-        init();
+        resetQuiz();
     });
 }
 // Creates buttons for viewing high scores or starting quiz again and renders them to the page along with event listeners for user navigation
